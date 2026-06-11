@@ -11,20 +11,26 @@ import paymentRouter from "./routes/payment.route.js"
 
 const app = express()
 app.use(cors({
-    origin:"https://ai-interview-agent-llpy.onrender.com",
-    credentials:true
+    origin: "https://ai-interview-agent-llpy.onrender.com",
+    credentials: true
 }))
+
+//  YAHAN MAINE WOH MEHNAT WALI LINE ADD KAR DI HAI (COOP Warning Fix):
+app.use((req, res, next) => {
+    res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
+    next();
+});
 
 app.use(express.json())
 app.use(cookieParser())
 
-app.use("/api/auth" , authRouter)
+app.use("/api/auth", authRouter)
 app.use("/api/user", userRouter)
-app.use("/api/interview" , interviewRouter)
-app.use("/api/payment" , paymentRouter)
+app.use("/api/interview", interviewRouter)
+app.use("/api/payment", paymentRouter)
 
 const PORT = process.env.PORT || 6000
-app.listen(PORT , ()=>{
+app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
     connectDb()
 })
