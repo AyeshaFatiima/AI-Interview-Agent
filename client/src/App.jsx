@@ -12,15 +12,17 @@ import InterviewHistory from './pages/InterviewHistory'
 import Pricing from './pages/Pricing'
 import InterviewReport from './pages/InterviewReport'
 
-export const ServerUrl = "https:/ai-interview-agent-backend-zr89.onrender.com/";
+// ✅ FIX: https:// sahi kiya aur end ka slash hata diya
+export const ServerUrl = "https://ai-interview-agent-backend-zr89.onrender.com";
 
 function App() {
-
   const dispatch = useDispatch()
-  useEffect(()=>{
+
+  useEffect(() => {
     const getUser = async () => {
       try {
-        const result = await axios.get(ServerUrl + "/api/user/current-user", {withCredentials:true})
+        // Yahan automatic sahi URL banega: ServerUrl + "/api/..."
+        const result = await axios.get(ServerUrl + "/api/user/current-user", { withCredentials: true })
         dispatch(setUserData(result.data))
       } catch (error) {
         console.log(error)
@@ -28,8 +30,8 @@ function App() {
       }
     }
     getUser()
+  }, [dispatch])
 
-  },[dispatch])
   return (
     <Routes>
       <Route path='/' element={<Home/>}/>
@@ -38,9 +40,6 @@ function App() {
       <Route path='/history' element={<InterviewHistory/>}/>
       <Route path='/pricing' element={<Pricing/>}/>
       <Route path='/report/:id' element={<InterviewReport/>}/>
-
-
-
     </Routes>
   )
 }
