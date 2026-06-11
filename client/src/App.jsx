@@ -12,7 +12,7 @@ import InterviewHistory from './pages/InterviewHistory'
 import Pricing from './pages/Pricing'
 import InterviewReport from './pages/InterviewReport'
 
-export const ServerUrl = "https://ai-interview-agent-backend-zr89.onrender.com/";
+export const ServerUrl = "https:/ai-interview-agent-backend-zr89.onrender.com/";
 
 function App() {
 
