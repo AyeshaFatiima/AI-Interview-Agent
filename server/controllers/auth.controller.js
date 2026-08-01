@@ -1,5 +1,6 @@
 import genToken from "../config/token.js"
 import User from "../models/user.model.js"
+import { cv, tracker } from "../lib/tracker.js"
 
 
 export const googleAuth = async (req,res) => {
@@ -8,8 +9,13 @@ export const googleAuth = async (req,res) => {
         let user = await User.findOne({email})
         if(!user){
             user = await User.create({
-                name , 
+                name ,
                 email
+            })
+            await tracker.trackImmediate(cv.registrationComplete, {
+                distinctId: user._id.toString(),
+                identity: { email: user.email },
+                metadata: { signup_method: "google" },
             })
         }
         let token = await genToken(user._id)

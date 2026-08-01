@@ -2,6 +2,7 @@ import Payment from "../models/payment.model.js";
 import User from "../models/user.model.js";
 import razorpay from "../services/razorpay.service.js";
 import crypto from "crypto"
+import { cv, tracker } from "../lib/tracker.js"
 
 export const createOrder = async (req,res) => {
     try {
@@ -74,6 +75,19 @@ export const verifyPayment = async (req,res) => {
     const updatedUser = await User.findByIdAndUpdate(payment.userId, {
       $inc: { credits: payment.credits }
     },{new:true});
+
+    await tracker.trackImmediate(cv.purchase, {
+      distinctId: payment.userId.toString(),
+      eventId: razorpay_payment_id,
+      identity: { email: updatedUser?.email },
+      revenue: payment.amount,
+      currency: "INR",
+      metadata: {
+        order_id: razorpay_order_id,
+        plan_id: payment.planId,
+        credits: payment.credits,
+      },
+    });
 
     res.json({
       success: true,

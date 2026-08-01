@@ -1,8 +1,10 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { FaArrowLeft, FaCheckCircle } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import { motion } from "motion/react";
 import axios from 'axios';
+import { cv } from '@hellyeah/x-ray';
+import { track } from '@hellyeah/x-ray/react';
 import { ServerUrl } from '../App';
 import { useDispatch } from 'react-redux';
 import { setUserData } from '../redux/userSlice';
@@ -11,6 +13,13 @@ function Pricing() {
   const [selectedPlan, setSelectedPlan] = useState("free");
   const [loadingPlan, setLoadingPlan] = useState(null);
   const dispatch = useDispatch()
+
+  useEffect(() => {
+    track(cv.viewContent, {
+      content_name: "pricing",
+      content_type: "pricing_page",
+    })
+  }, [])
 
   const plans = [
     {
@@ -94,6 +103,14 @@ function Pricing() {
       },
 
       }
+
+      track(cv.beginCheckout, {
+        plan_id: plan.id,
+        plan_name: plan.name,
+        credits: plan.credits,
+        revenue: amount,
+        currency: "INR",
+      })
 
       const rzp = new window.Razorpay(options)
       rzp.open()
