@@ -2,7 +2,6 @@ import axios from 'axios';
 axios.defaults.withCredentials = true;
 import React from 'react'
 import { Route, Routes } from 'react-router-dom'
-import { Analytics, identify } from '@hellyeah/x-ray/react'
 import Home from './pages/Home'
 import Auth from './pages/Auth'
 import { useEffect } from 'react'
@@ -12,7 +11,6 @@ import InterviewPage from './pages/InterviewPage'
 import InterviewHistory from './pages/InterviewHistory'
 import Pricing from './pages/Pricing'
 import InterviewReport from './pages/InterviewReport'
-import { TRACKER_ID } from './lib/trackerId'
 
 // ✅ FIX: https:// sahi kiya aur end ka slash hata diya
 export const ServerUrl = "https://ai-interview-agent-backend-zr89.onrender.com";
@@ -26,9 +24,6 @@ function App() {
         // Yahan automatic sahi URL banega: ServerUrl + "/api/..."
         const result = await axios.get(ServerUrl + "/api/user/current-user", { withCredentials: true })
         dispatch(setUserData(result.data))
-        if (result.data?._id) {
-          identify(result.data._id, { email: result.data.email })
-        }
       } catch (error) {
         console.log(error)
         dispatch(setUserData(null))
@@ -38,17 +33,14 @@ function App() {
   }, [dispatch])
 
   return (
-    <>
-      <Analytics websiteId={TRACKER_ID} env={import.meta.env.VITE_TRACKER_ENV} />
-      <Routes>
-        <Route path='/' element={<Home/>}/>
-        <Route path='/auth' element={<Auth/>}/>
-        <Route path='/interview' element={<InterviewPage/>}/>
-        <Route path='/history' element={<InterviewHistory/>}/>
-        <Route path='/pricing' element={<Pricing/>}/>
-        <Route path='/report/:id' element={<InterviewReport/>}/>
-      </Routes>
-    </>
+    <Routes>
+      <Route path='/' element={<Home/>}/>
+      <Route path='/auth' element={<Auth/>}/>
+      <Route path='/interview' element={<InterviewPage/>}/>
+      <Route path='/history' element={<InterviewHistory/>}/>
+      <Route path='/pricing' element={<Pricing/>}/>
+      <Route path='/report/:id' element={<InterviewReport/>}/>
+    </Routes>
   )
 }
 

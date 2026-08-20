@@ -3,7 +3,6 @@ import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.mjs";
 import { askAi } from "../services/openRouter.service.js";
 import User from "../models/user.model.js";
 import Interview from "../models/interview.model.js";
-import { tracker } from "../lib/tracker.js";
 
 export const analyzeResume = async (req, res) => {
   try {
@@ -212,17 +211,6 @@ Make questions based on the candidate’s role, experience,interviewMode, projec
       }))
     })
 
-    await tracker.trackImmediate("interview_generated", {
-      distinctId: user._id.toString(),
-      identity: { email: user.email },
-      metadata: {
-        interview_id: interview._id.toString(),
-        role,
-        experience,
-        mode,
-      },
-    });
-
     res.json({
       interviewId: interview._id,
       creditsLeft: user.credits,
@@ -389,18 +377,6 @@ export const finishInterview = async (req,res) => {
 
     await interview.save();
 
-    await tracker.trackImmediate("interview_completed", {
-      distinctId: interview.userId.toString(),
-      eventId: `interview_completed:${interview._id.toString()}`,
-      metadata: {
-        interview_id: interview._id.toString(),
-        role: interview.role,
-        experience: interview.experience,
-        mode: interview.mode,
-        final_score: Number(finalScore.toFixed(1)),
-      },
-    });
-
     return res.status(200).json({
        finalScore: Number(finalScore.toFixed(1)),
       confidence: Number(avgConfidence.toFixed(1)),
@@ -478,6 +454,7 @@ export const getInterviewReport = async (req,res) => {
     return res.status(500).json({message:`failed to find currentUser Interview report ${error}`})
   }
 }
+
 
 
 
